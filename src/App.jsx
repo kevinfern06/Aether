@@ -6,7 +6,7 @@ import {
   UserPlus, Signal, Bell, Shield, Award, Crown, Medal, Star, User, Eye, 
   Camera, LogOut, BellRing, Lock, Check, Palette, Layout, Link2, 
   Edit3, Share, ChevronRight, LogIn, Coffee, Music, Mic, UserCheck,
-  ClipboardList
+  ClipboardList, SlidersHorizontal, ArrowDownWideNarrow, Calendar, SortAsc
 } from 'lucide-react';
 
 // --- Configuration API Gemini ---
@@ -53,23 +53,10 @@ const MarkdownRenderer = ({ content }) => {
     <div className="space-y-2 text-gray-300 font-light">
       {content.split('\n').map((line, i) => {
         const trimmed = line.trim();
-        if (trimmed.startsWith('### ')) {
-          return <h3 key={i} className="text-lg font-bold text-white mt-6 mb-2 flex items-center gap-2"><span className="w-1 h-4 bg-violet-500 rounded-full"></span>{parseBold(trimmed.replace('### ', ''))}</h3>;
-        }
-        if (trimmed.startsWith('## ')) {
-          return <h2 key={i} className="text-xl font-bold text-white mt-8 mb-3 border-b border-white/10 pb-1">{parseBold(trimmed.replace('## ', ''))}</h2>;
-        }
-        if (trimmed.startsWith('# ')) {
-          return <h1 key={i} className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-violet-300 mt-4 mb-4">{parseBold(trimmed.replace('# ', ''))}</h1>;
-        }
-        if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
-          return (
-            <div key={i} className="flex gap-3 ml-2 mb-1">
-              <span className="text-violet-500 mt-1.5 min-w-[6px] h-[6px] rounded-full bg-violet-500 block"></span>
-              <p className="leading-relaxed">{parseBold(trimmed.replace(/^[\*\-] /, ''))}</p>
-            </div>
-          );
-        }
+        if (trimmed.startsWith('### ')) return <h3 key={i} className="text-lg font-bold text-white mt-6 mb-2 flex items-center gap-2"><span className="w-1 h-4 bg-violet-500 rounded-full"></span>{parseBold(trimmed.replace('### ', ''))}</h3>;
+        if (trimmed.startsWith('## ')) return <h2 key={i} className="text-xl font-bold text-white mt-8 mb-3 border-b border-white/10 pb-1">{parseBold(trimmed.replace('## ', ''))}</h2>;
+        if (trimmed.startsWith('# ')) return <h1 key={i} className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-violet-300 mt-4 mb-4">{parseBold(trimmed.replace('# ', ''))}</h1>;
+        if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) return <div key={i} className="flex gap-3 ml-2 mb-1"><span className="text-violet-500 mt-1.5 min-w-[6px] h-[6px] rounded-full bg-violet-500 block"></span><p className="leading-relaxed">{parseBold(trimmed.replace(/^[\*\-] /, ''))}</p></div>;
         if (trimmed === '---' || trimmed === '***') return <hr key={i} className="border-white/10 my-4" />;
         if (trimmed === '') return <div key={i} className="h-2"></div>;
         return <p key={i} className="leading-relaxed">{parseBold(line)}</p>;
@@ -80,10 +67,7 @@ const MarkdownRenderer = ({ content }) => {
 
 // --- Composants UI de base ---
 const Card = ({ children, className = "", onClick }) => (
-  <div 
-    onClick={onClick}
-    className={`bg-[#131625]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-lg hover:border-violet-500/30 transition-all duration-300 ${onClick ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]' : ''} ${className}`}
-  >
+  <div onClick={onClick} className={`bg-[#131625]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-lg hover:border-violet-500/30 transition-all duration-300 ${onClick ? 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]' : ''} ${className}`}>
     {children}
   </div>
 );
@@ -100,11 +84,7 @@ const Badge = ({ children, color = "blue", className = "" }) => {
     pink: "bg-pink-500/20 text-pink-300 border-pink-500/30",
     teal: "bg-teal-500/20 text-teal-300 border-teal-500/30"
   };
-  return (
-    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${colors[color]} ${className}`}>
-      {children}
-    </span>
-  );
+  return <span className={`px-3 py-1 rounded-full text-xs font-medium border ${colors[color]} ${className}`}>{children}</span>;
 };
 
 // --- Modales ---
@@ -116,14 +96,10 @@ const OracleModal = ({ isOpen, onClose, content, loading, title }) => {
       <div className="relative bg-[#0f121e] border border-violet-500/30 w-full max-w-lg rounded-2xl shadow-[0_0_50px_rgba(139,92,246,0.3)] overflow-hidden flex flex-col max-h-[80vh]">
         <div className="bg-gradient-to-r from-violet-900/50 to-cyan-900/50 p-6 flex items-center justify-between border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-violet-500/20 rounded-lg animate-pulse">
-              <Sparkles size={20} className="text-violet-300" />
-            </div>
+            <div className="p-2 bg-violet-500/20 rounded-lg animate-pulse"><Sparkles size={20} className="text-violet-300" /></div>
             <h3 className="text-xl font-bold text-white">{title || "L'Oracle d'Aether"}</h3>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
-            <X size={24} />
-          </button>
+          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors"><X size={24} /></button>
         </div>
         <div className="p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-violet-500/20 scrollbar-track-transparent">
           {loading ? (
@@ -131,12 +107,7 @@ const OracleModal = ({ isOpen, onClose, content, loading, title }) => {
               <Loader2 size={48} className="text-violet-400 animate-spin" />
               <p className="text-violet-200 animate-pulse text-sm tracking-widest uppercase">Consultation des archives cosmiques...</p>
             </div>
-          ) : (
-            <MarkdownRenderer content={content} />
-          )}
-        </div>
-        <div className="p-4 bg-[#0B0E14] border-t border-white/5 text-center">
-          <p className="text-xs text-gray-500 italic">Propulsé par Gemini AI • Analyse en temps réel</p>
+          ) : ( <MarkdownRenderer content={content} /> )}
         </div>
       </div>
     </div>
@@ -149,33 +120,16 @@ const DNAModal = ({ isOpen, onClose, stats, dnaTitle }) => {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={onClose}></div>
       <div className="relative bg-[#0B0E14] border border-violet-500/50 w-full max-w-2xl rounded-3xl shadow-[0_0_100px_rgba(139,92,246,0.2)] overflow-hidden flex flex-col items-center p-8 md:p-16">
-        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors z-20">
-          <X size={24} />
-        </button>
-        {/* Increased bottom margin to prevent overlap with chart labels */}
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors z-20"><X size={24} /></button>
         <div className="text-center mb-24">
-          <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400 mb-3">
-            Analyse Spectrale Complète
-          </h2>
+          <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400 mb-3">Analyse Spectrale Complète</h2>
           <p className="text-gray-400 uppercase tracking-widest text-sm">Signature unique du joueur</p>
         </div>
-        {/* Increased top margin for better spacing */}
-        <div className="scale-110 md:scale-125 mb-12 mt-6">
-           <GamerDNA stats={stats} size={300} showLabels={true} expanded={true} />
-        </div>
+        <div className="scale-110 md:scale-125 mb-12 mt-6"><GamerDNA stats={stats} size={300} showLabels={true} expanded={true} /></div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-8">
-           <div className="bg-white/5 rounded-xl p-5 border border-white/5 text-center">
-             <p className="text-violet-400 text-xs uppercase font-bold mb-2">Point Fort</p>
-             <p className="text-white text-lg font-bold">Exploration (90)</p>
-           </div>
-           <div className="bg-white/5 rounded-xl p-5 border border-white/5 text-center ring-1 ring-violet-500/30">
-             <p className="text-cyan-400 text-xs uppercase font-bold mb-2">Classe</p>
-             <p className="text-white text-lg font-bold">{dnaTitle}</p>
-           </div>
-           <div className="bg-white/5 rounded-xl p-5 border border-white/5 text-center">
-             <p className="text-pink-400 text-xs uppercase font-bold mb-2">Point Faible</p>
-             <p className="text-white text-lg font-bold">Agressivité (30)</p>
-           </div>
+           <div className="bg-white/5 rounded-xl p-5 border border-white/5 text-center"><p className="text-violet-400 text-xs uppercase font-bold mb-2">Point Fort</p><p className="text-white text-lg font-bold">Exploration (90)</p></div>
+           <div className="bg-white/5 rounded-xl p-5 border border-white/5 text-center ring-1 ring-violet-500/30"><p className="text-cyan-400 text-xs uppercase font-bold mb-2">Classe</p><p className="text-white text-lg font-bold">{dnaTitle}</p></div>
+           <div className="bg-white/5 rounded-xl p-5 border border-white/5 text-center"><p className="text-pink-400 text-xs uppercase font-bold mb-2">Point Faible</p><p className="text-white text-lg font-bold">Agressivité (30)</p></div>
         </div>
       </div>
     </div>
@@ -187,7 +141,6 @@ const GamerDNA = ({ stats, size = 200, showLabels = true, expanded = false }) =>
   const center = size / 2;
   const radius = size * 0.35;
   const angleStep = (Math.PI * 2) / 6;
-
   const getPoint = (value, index) => {
     const angle = index * angleStep - Math.PI / 2;
     const r = (value / 100) * radius;
@@ -195,56 +148,17 @@ const GamerDNA = ({ stats, size = 200, showLabels = true, expanded = false }) =>
     const y = center + r * Math.sin(angle);
     return `${x},${y}`;
   };
-
-  const labels = [
-    { name: "Stratégie", icon: Brain },
-    { name: "Social", icon: Users },
-    { name: "Réflexes", icon: Zap },
-    { name: "Précision", icon: Target },
-    { name: "Agressivité", icon: Swords },
-    { name: "Exploration", icon: Globe },
-  ];
-
+  const labels = [ { name: "Stratégie", icon: Brain }, { name: "Social", icon: Users }, { name: "Réflexes", icon: Zap }, { name: "Précision", icon: Target }, { name: "Agressivité", icon: Swords }, { name: "Exploration", icon: Globe }, ];
   const pointsString = Object.values(stats).map((val, i) => getPoint(val, i)).join(" ");
-
   return (
     <div className="relative flex flex-col items-center justify-center py-4">
       <div style={{ width: size, height: size }} className="relative">
         <div className="absolute inset-0 bg-violet-500/20 blur-3xl rounded-full animate-pulse"></div>
         <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full drop-shadow-[0_0_15px_rgba(139,92,246,0.5)] overflow-visible">
-          {[25, 50, 75, 100].map((level, idx) => (
-            <polygon
-              key={idx}
-              points={Object.values(stats).map((_, i) => getPoint(level, i)).join(" ")}
-              fill="none"
-              stroke="rgba(255, 255, 255, 0.1)"
-              strokeWidth="1"
-            />
-          ))}
-          {labels.map((_, i) => {
-             const endPoint = getPoint(100, i);
-             return (
-               <line 
-                key={i} 
-                x1={center} 
-                y1={center} 
-                x2={endPoint.split(',')[0]} 
-                y2={endPoint.split(',')[1]} 
-                stroke="rgba(255, 255, 255, 0.1)" 
-              />
-             );
-          })}
-          <polygon
-            points={pointsString}
-            fill="rgba(139, 92, 246, 0.4)"
-            stroke="#8b5cf6"
-            strokeWidth="2"
-            className="transition-all duration-1000 ease-out"
-          />
-          {Object.values(stats).map((val, i) => {
-             const [cx, cy] = getPoint(val, i).split(',');
-             return <circle key={i} cx={cx} cy={cy} r={size > 200 ? "5" : "3"} fill="white" />;
-          })}
+          {[25, 50, 75, 100].map((level, idx) => <polygon key={idx} points={Object.values(stats).map((_, i) => getPoint(level, i)).join(" ")} fill="none" stroke="rgba(255, 255, 255, 0.1)" strokeWidth="1" />)}
+          {labels.map((_, i) => { const endPoint = getPoint(100, i); return <line key={i} x1={center} y1={center} x2={endPoint.split(',')[0]} y2={endPoint.split(',')[1]} stroke="rgba(255, 255, 255, 0.1)" />; })}
+          <polygon points={pointsString} fill="rgba(139, 92, 246, 0.4)" stroke="#8b5cf6" strokeWidth="2" className="transition-all duration-1000 ease-out" />
+          {Object.values(stats).map((val, i) => { const [cx, cy] = getPoint(val, i).split(','); return <circle key={i} cx={cx} cy={cy} r={size > 200 ? "5" : "3"} fill="white" />; })}
         </svg>
         {showLabels && labels.map((item, i) => {
            const angle = i * angleStep - Math.PI / 2;
@@ -254,38 +168,32 @@ const GamerDNA = ({ stats, size = 200, showLabels = true, expanded = false }) =>
            let style = { left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' };
            return (
              <div key={i} className="absolute flex flex-col items-center text-[10px] md:text-xs text-gray-400 font-medium tracking-widest uppercase" style={style}>
-               <item.icon size={size > 200 ? 18 : 12} className="mb-2 text-violet-400" />
-               {item.name}
+               <item.icon size={size > 200 ? 18 : 12} className="mb-2 text-violet-400" /> {item.name}
              </div>
            );
         })}
       </div>
       <div className={`text-center transition-all ${expanded ? 'mt-16' : 'mt-6'}`}>
         <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Type de Joueur</p>
-        <h3 className={`font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400 ${size > 200 ? 'text-3xl' : 'text-xl'}`}>
-          Architecte Tacticien
-        </h3>
+        <h3 className={`font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400 ${size > 200 ? 'text-3xl' : 'text-xl'}`}> Architecte Tacticien </h3>
       </div>
     </div>
   );
 };
 
-// --- VUE: Dashboard (Accueil Dynamique) ---
+// --- VIEWS ---
+
 const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOracle, handleSynergyCheck, handleSquadBriefing, setActiveTab, mood }) => {
-  
-  // Filtrage des jeux selon l'humeur
   const getFilteredGames = () => {
     if (mood === 'chill') return games.filter(g => g.tags.includes('Chill') || g.tags.includes('Solo'));
     if (mood === 'social') return games.filter(g => g.tags.includes('Multi') || g.tags.includes('Coop'));
     return games.filter(g => g.tags.includes('Ranked') || g.tags.includes('Hardcore'));
   };
-
   const filteredGames = getFilteredGames();
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-12 gap-6 animate-in fade-in zoom-in-95 duration-500">
-      
-      {/* Left Column: Gamer DNA */}
+      {/* Left Column */}
       <div className="md:col-span-4 lg:col-span-3 space-y-6">
         <Card 
           className={`h-full flex flex-col items-center justify-center relative overflow-hidden group ${mood === 'chill' ? 'border-teal-500/20' : mood === 'social' ? 'border-pink-500/20' : 'border-violet-500/20'}`}
@@ -310,69 +218,39 @@ const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOrac
         </Card>
       </div>
 
-      {/* Center Column: Dynamic Content */}
+      {/* Center Column */}
       <div className="md:col-span-8 lg:col-span-6 space-y-6">
-        
-        {/* MOOD HEADER WIDGET */}
         {mood === 'chill' ? (
            <Card className="bg-gradient-to-r from-teal-900/40 to-emerald-900/40 border-teal-500/20 relative overflow-hidden">
               <div className="flex items-center gap-4 relative z-10">
-                 <div className="p-3 bg-teal-500/20 rounded-full">
-                    <Coffee size={24} className="text-teal-300" />
-                 </div>
-                 <div>
-                    <h3 className="text-xl font-bold text-white">Zone de Détente</h3>
-                    <p className="text-sm text-teal-200/80">Pas de stress, pas de ranked. Juste de l'exploration.</p>
-                 </div>
-              </div>
-              <div className="mt-4 flex gap-3">
-                 <div className="px-3 py-1 bg-black/20 rounded-lg text-xs text-teal-100 flex items-center gap-2"><Music size={12}/> Lo-Fi Beats activé</div>
-                 <div className="px-3 py-1 bg-black/20 rounded-lg text-xs text-teal-100">Notifications silencieuses</div>
+                 <div className="p-3 bg-teal-500/20 rounded-full"><Coffee size={24} className="text-teal-300" /></div>
+                 <div><h3 className="text-xl font-bold text-white">Zone de Détente</h3><p className="text-sm text-teal-200/80">Pas de stress, pas de ranked.</p></div>
               </div>
            </Card>
         ) : mood === 'social' ? (
            <Card className="bg-gradient-to-r from-pink-900/40 to-rose-900/40 border-pink-500/20 relative overflow-hidden">
               <div className="flex items-center gap-4 relative z-10">
-                 <div className="p-3 bg-pink-500/20 rounded-full">
-                    <Mic size={24} className="text-pink-300" />
-                 </div>
-                 <div>
-                    <h3 className="text-xl font-bold text-white">Hub Social Actif</h3>
-                    <p className="text-sm text-pink-200/80">3 amis sont en ligne et prêts à jouer.</p>
-                 </div>
-              </div>
-              <div className="mt-4 flex gap-2">
-                 {friends.filter(f => f.status.includes('En ligne') || f.status.includes('In Game')).map((f, i) => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-pink-500/30 overflow-hidden" title={f.name}>
-                       <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${f.name}`} alt={f.name} />
-                    </div>
-                 ))}
-                 <button className="w-8 h-8 rounded-full bg-pink-500/20 text-pink-300 flex items-center justify-center text-xs hover:bg-pink-500/40 transition-colors">+</button>
+                 <div className="p-3 bg-pink-500/20 rounded-full"><Mic size={24} className="text-pink-300" /></div>
+                 <div><h3 className="text-xl font-bold text-white">Hub Social Actif</h3><p className="text-sm text-pink-200/80">Mode Escouade activé.</p></div>
               </div>
            </Card>
         ) : (
-          /* Default Competitive Stats */
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="p-4 flex flex-col items-center justify-center gap-1 bg-gradient-to-b from-[#1a1d2d] to-[#131625]">
-              <h3 className="text-3xl font-bold text-white">4,820</h3>
-              <span className="text-xs text-gray-500 uppercase tracking-wider">Heures</span>
+              <h3 className="text-3xl font-bold text-white">4,820</h3><span className="text-xs text-gray-500 uppercase tracking-wider">Heures</span>
             </Card>
             <Card className="p-4 flex flex-col items-center justify-center gap-1 bg-gradient-to-b from-[#1a1d2d] to-[#131625]">
-              <h3 className="text-3xl font-bold text-white">342</h3>
-              <span className="text-xs text-gray-500 uppercase tracking-wider">Jeux</span>
+              <h3 className="text-3xl font-bold text-white">342</h3><span className="text-xs text-gray-500 uppercase tracking-wider">Jeux</span>
             </Card>
             <Card className="p-4 flex flex-col items-center justify-center gap-1 bg-gradient-to-b from-[#1a1d2d] to-[#131625]">
-              <h3 className="text-3xl font-bold text-white">12</h3>
-              <span className="text-xs text-gray-500 uppercase tracking-wider">Platines</span>
+              <h3 className="text-3xl font-bold text-white">12</h3><span className="text-xs text-gray-500 uppercase tracking-wider">Platines</span>
             </Card>
             <Card className="p-4 flex flex-col items-center justify-center gap-1 bg-gradient-to-b from-[#1a1d2d] to-[#131625]">
-              <h3 className="text-3xl font-bold text-cyan-400">Top 5%</h3>
-              <span className="text-xs text-gray-500 uppercase tracking-wider">Monde</span>
+              <h3 className="text-3xl font-bold text-cyan-400">Top 5%</h3><span className="text-xs text-gray-500 uppercase tracking-wider">Monde</span>
             </Card>
           </div>
         )}
 
-        {/* Recent Activity / Recommendations */}
         <Card>
           <div className="flex justify-between items-center mb-4">
              <button onClick={() => setActiveTab('games')} className="text-lg font-bold text-white hover:text-white/80 transition-colors flex items-center gap-2 group">
@@ -385,19 +263,13 @@ const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOrac
             {filteredGames.length > 0 ? filteredGames.map((game, i) => (
               <div key={i} className="flex items-center p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group" onClick={() => setActiveTab('games')}>
                 <div className={`w-12 h-12 rounded-lg mr-4 ${game.img} flex items-center justify-center text-xl font-bold text-white/20 border border-white/5 overflow-hidden relative`}>
-                  <img 
-                    src={`https://image.pollinations.ai/prompt/icon%20for%20video%20game%20${encodeURIComponent(game.name)}%20minimalist?width=100&height=100&nologo=true`}
-                    className="absolute inset-0 w-full h-full object-cover opacity-60"
-                    alt={game.name}
-                  />
+                  <img src={`https://image.pollinations.ai/prompt/icon%20for%20video%20game%20${encodeURIComponent(game.name)}%20minimalist?width=100&height=100&nologo=true`} className="absolute inset-0 w-full h-full object-cover opacity-60" alt={game.name} />
                   <span className="relative z-10 drop-shadow-md">{game.name.charAt(0)}</span>
                 </div>
                 <div className="flex-1">
                   <h4 className="font-bold text-gray-200 group-hover:text-white">{game.name}</h4>
                   <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <span>{game.platform}</span>
-                    <span className="w-1 h-1 bg-gray-700 rounded-full"></span>
-                    <span>{game.genre}</span>
+                    <span>{game.platform}</span><span className="w-1 h-1 bg-gray-700 rounded-full"></span><span>{game.genre}</span>
                   </div>
                 </div>
                 <div className="text-right">
@@ -408,9 +280,7 @@ const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOrac
                          <div className={`h-full rounded-full ${mood === 'chill' ? 'bg-teal-500' : 'bg-cyan-500'}`} style={{width: `${game.completion}%`}}></div>
                        </div>
                      </div>
-                   ) : (
-                     <span className="text-xs px-2 py-1 rounded border border-gray-700 text-gray-400">Multijoueur</span>
-                   )}
+                   ) : ( <span className="text-xs px-2 py-1 rounded border border-gray-700 text-gray-400">Multijoueur</span> )}
                 </div>
               </div>
             )) : (
@@ -418,41 +288,9 @@ const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOrac
             )}
           </div>
         </Card>
-
-        {/* Univers Connectés */}
-        {mood === 'competitif' && (
-          <Card className="relative overflow-hidden">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Globe size={18} className="text-cyan-400" /> Univers Connectés
-              </h2>
-              <button 
-                onClick={() => setActiveTab('settings')}
-                className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1 font-bold hover:underline"
-              >
-                + Connecter
-              </button>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-               {[
-                 { name: 'Steam', icon: Monitor, active: true, color: 'group-hover:text-blue-400' },
-                 { name: 'PSN', icon: Gamepad2, active: true, color: 'group-hover:text-blue-600' },
-                 { name: 'Epic', icon: Zap, active: true, color: 'group-hover:text-gray-200' },
-                 { name: 'Xbox', icon: Cpu, active: false, color: 'group-hover:text-green-500' },
-                 { name: 'Mobile', icon: Smartphone, active: false, color: 'group-hover:text-yellow-400' },
-               ].map((p, idx) => (
-                 <div key={idx} className={`group flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${p.active ? 'bg-white/5 border-white/10 hover:border-white/30' : 'bg-transparent border-dashed border-gray-700 opacity-50 hover:opacity-100'}`}>
-                   <p.icon size={24} className={`mb-2 text-gray-400 transition-colors ${p.active ? p.color : ''}`} />
-                   <span className="text-xs font-medium text-gray-400">{p.name}</span>
-                   {p.active && <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.5)]"></div>}
-                 </div>
-               ))}
-            </div>
-          </Card>
-        )}
       </div>
 
-      {/* Right Column: Friends & Social (3 cols) */}
+      {/* Right Column: Social */}
       <div className="md:col-span-12 lg:col-span-3 space-y-6">
          <Card className="h-full bg-gradient-to-b from-[#131625]/90 to-[#0f1119]/95">
            <div className="flex justify-between items-center mb-6">
@@ -460,76 +298,31 @@ const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOrac
                <Users size={18} className={mood === 'social' ? 'text-pink-400' : 'text-violet-400'} /> Squad
              </h2>
              <div className="flex gap-2">
-                <button
-                  onClick={handleSquadBriefing}
-                  className="p-1.5 rounded-lg bg-violet-600/20 text-violet-300 hover:bg-violet-600 hover:text-white transition-all"
-                  title="Briefing Tactique IA"
-                >
-                  <ClipboardList size={14} />
-                </button>
-                <button 
-                  onClick={() => setActiveTab('social')}
-                  className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
-                  title="Chercher des joueurs"
-                >
-                  <Search size={14} className="text-gray-400" />
-                </button>
+                <button onClick={handleSquadBriefing} className="p-1.5 rounded-lg bg-violet-600/20 text-violet-300 hover:bg-violet-600 hover:text-white transition-all" title="Briefing Tactique IA"><ClipboardList size={14} /></button>
+                <button onClick={() => setActiveTab('social')} className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors" title="Chercher des joueurs"><Search size={14} className="text-gray-400" /></button>
              </div>
            </div>
-
            <div className="space-y-4">
-             {/* Friend Item */}
              {friends.map((friend, idx) => (
-               <div 
-                 key={idx} 
-                 className="group flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors relative cursor-pointer"
-                 onClick={() => setActiveTab('profile')}
-                 title="Voir le profil"
-               >
+               <div key={idx} className="group flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors relative cursor-pointer" onClick={() => setActiveTab('profile')} title="Voir le profil">
                  <div className="relative">
-                   <div className="w-10 h-10 rounded-full bg-gray-800 border border-white/10 flex items-center justify-center text-xs font-bold">
-                      {friend.name.charAt(0)}
-                   </div>
+                   <div className="w-10 h-10 rounded-full bg-gray-800 border border-white/10 flex items-center justify-center text-xs font-bold">{friend.name.charAt(0)}</div>
                    <div className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[#131625] ${friend.status.includes('In Game') ? 'bg-green-500' : friend.status === 'Hors ligne' ? 'bg-gray-500' : 'bg-cyan-500'}`}></div>
                  </div>
                  <div className="flex-1 min-w-0">
                    <h4 className="text-sm font-medium text-gray-200 truncate">{friend.name}</h4>
                    <p className="text-xs text-gray-500 truncate">{friend.status}</p>
                  </div>
-                 
-                 {/* Actions au survol : Ajouter / Synergie */}
                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all absolute right-2">
-                    <button 
-                      className="p-1.5 rounded-md bg-green-600 text-white hover:bg-green-500 shadow-lg hover:scale-110 transition-transform"
-                      title="Ajouter en ami"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // Mock add functionality
-                      }}
-                    >
-                      <UserPlus size={14} />
-                    </button>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSynergyCheck(friend);
-                      }}
-                      className="bg-violet-600 text-white p-1.5 rounded-md shadow-lg hover:bg-violet-500 hover:scale-110 transition-transform"
-                      title="Analyser la Synergie"
-                    >
-                      <Sparkles size={14} />
-                    </button>
+                    <button className="p-1.5 rounded-md bg-green-600 text-white hover:bg-green-500 shadow-lg hover:scale-110 transition-transform" title="Ajouter en ami" onClick={(e) => { e.stopPropagation(); }}><UserPlus size={14} /></button>
+                    <button onClick={(e) => { e.stopPropagation(); handleSynergyCheck(friend); }} className="bg-violet-600 text-white p-1.5 rounded-md shadow-lg hover:bg-violet-500 hover:scale-110 transition-transform" title="Analyser la Synergie"><Sparkles size={14} /></button>
                  </div>
                </div>
              ))}
            </div>
-
            <div className="mt-8 pt-6 border-t border-white/5">
              <h3 className="text-sm font-medium text-gray-300 mb-3">Suggestions de Squad</h3>
-             {/* Modified Suggestion Card to look like a profile to add */}
-             <div 
-               className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center gap-3 cursor-pointer hover:bg-violet-500/20 transition-colors group"
-             >
+             <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center gap-3 cursor-pointer hover:bg-violet-500/20 transition-colors group">
                 <div className="w-10 h-10 rounded-full bg-gray-800 border border-violet-500/30 overflow-hidden">
                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Viper_X" alt="Viper_X" />
                 </div>
@@ -537,39 +330,38 @@ const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOrac
                   <p className="text-xs text-violet-200 font-bold">Viper_X</p>
                   <p className="text-[10px] text-violet-400/80">Compatibilité 92%</p>
                 </div>
-                <button 
-                  className="p-2 rounded-lg bg-violet-600 text-white hover:bg-violet-500 shadow-lg opacity-0 group-hover:opacity-100 transition-all"
-                  title="Ajouter Viper_X"
-                >
+                <button className="p-2 rounded-lg bg-violet-600 text-white hover:bg-violet-500 shadow-lg opacity-0 group-hover:opacity-100 transition-all" title="Ajouter Viper_X">
                   <UserPlus size={16} />
                 </button>
              </div>
            </div>
          </Card>
       </div>
-
     </div>
   );
 };
 
-// ... (Autres composants inchangés) ...
-
 const GameLibrary = ({ mood }) => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('recent'); // 'recent', 'hours', 'alpha', 'completion'
+  const [showSortMenu, setShowSortMenu] = useState(false);
   
   // Tags added for mood filtering
   const libraryGames = [
     { name: "Elden Ring", platform: "Steam", hours: 120, completion: 85, color: "bg-amber-900/20", genre: "RPG", lastPlayed: "2h ago", tags: ["Hardcore", "Solo", "Exploration"] },
     { name: "Valorant", platform: "Riot", hours: 450, completion: null, color: "bg-rose-900/20", genre: "FPS", lastPlayed: "1d ago", tags: ["Ranked", "Multi", "Team"] },
     { name: "God of War", platform: "PSN", hours: 40, completion: 100, color: "bg-slate-700/50", genre: "Action", lastPlayed: "1w ago", tags: ["Solo", "Story"] },
-    { name: "Stardew Valley", platform: "Steam", hours: 200, completion: 60, img: "bg-green-900/20", genre: "Sim", color: "bg-green-900/20", lastPlayed: "1d ago", tags: ["Chill", "Solo"] },
-    { name: "It Takes Two", platform: "Steam", hours: 15, completion: 100, img: "bg-blue-900/20", genre: "Coop", color: "bg-blue-900/20", lastPlayed: "3d ago", tags: ["Coop", "Multi", "Chill"] },
-    { name: "Apex Legends", platform: "Steam", hours: 300, completion: null, img: "bg-red-900/20", genre: "Battle Royale", color: "bg-red-900/20", lastPlayed: "5h ago", tags: ["Ranked", "Multi", "Fast"] },
     { name: "Cyberpunk 2077", platform: "Steam", hours: 85, completion: 60, color: "bg-yellow-400/10", genre: "RPG", lastPlayed: "2d ago", tags: ["Solo", "Story", "Hardcore"] },
     { name: "Hollow Knight", platform: "Switch", hours: 35, completion: 112, color: "bg-blue-900/20", genre: "Metroidvania", lastPlayed: "3d ago", tags: ["Solo", "Hardcore"] },
     { name: "Destiny 2", platform: "Steam", hours: 1200, completion: null, color: "bg-cyan-900/20", genre: "MMO FPS", lastPlayed: "5h ago", tags: ["Multi", "Coop", "Grind"] },
+    { name: "The Witcher 3", platform: "Steam", hours: 200, completion: 100, color: "bg-orange-900/20", genre: "RPG", lastPlayed: "1mo ago", tags: ["Solo", "Story", "RPG"] },
     { name: "Mario Kart 8", platform: "Switch", hours: 60, completion: null, color: "bg-red-600/20", genre: "Racing", lastPlayed: "2w ago", tags: ["Multi", "Chill", "Fun"] },
+    { name: "Overwatch 2", platform: "Battle.net", hours: 800, completion: null, color: "bg-gray-200/10", genre: "FPS", lastPlayed: "10m ago", tags: ["Ranked", "Multi", "Team"] },
+    { name: "Zelda: TOTK", platform: "Switch", hours: 150, completion: 45, color: "bg-green-900/20", genre: "Adventure", lastPlayed: "4d ago", tags: ["Solo", "Adventure", "Exploration"] },
+    { name: "Stardew Valley", platform: "Steam", hours: 200, completion: 60, color: "bg-green-900/20", genre: "Sim", lastPlayed: "1d ago", tags: ["Chill", "Solo"] },
+    { name: "It Takes Two", platform: "Steam", hours: 15, completion: 100, color: "bg-blue-900/20", genre: "Coop", lastPlayed: "3d ago", tags: ["Coop", "Multi", "Chill"] },
+    { name: "Apex Legends", platform: "Steam", hours: 300, completion: null, color: "bg-red-900/20", genre: "Battle Royale", lastPlayed: "5h ago", tags: ["Ranked", "Multi", "Fast"] },
   ];
 
   // Effect to auto-set filter based on mood when component mounts or mood changes
@@ -578,6 +370,32 @@ const GameLibrary = ({ mood }) => {
     else if (mood === 'social') setFilter('Multi');
     else setFilter('all');
   }, [mood]);
+
+  // Sorting Logic
+  const getSortedGames = (games) => {
+      return [...games].sort((a, b) => {
+          switch (sortBy) {
+              case 'hours':
+                  return b.hours - a.hours;
+              case 'alpha':
+                  return a.name.localeCompare(b.name);
+              case 'completion':
+                  return (b.completion || 0) - (a.completion || 0);
+              case 'recent':
+              default:
+                   // Simple heuristic for demo: parse string to rough seconds
+                   const getTimeVal = (str) => {
+                      if (str.includes('m')) return parseInt(str) * 60;
+                      if (str.includes('h')) return parseInt(str) * 3600;
+                      if (str.includes('d')) return parseInt(str) * 86400;
+                      if (str.includes('w')) return parseInt(str) * 604800;
+                      if (str.includes('mo')) return parseInt(str) * 2592000;
+                      return 99999999; // Default high value for unknown
+                  };
+                  return getTimeVal(a.lastPlayed) - getTimeVal(b.lastPlayed);
+          }
+      });
+  };
 
   const filteredGames = libraryGames.filter(g => {
     const matchesSearch = g.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -595,6 +413,8 @@ const GameLibrary = ({ mood }) => {
     return matchesFilter && matchesSearch;
   });
 
+  const displayedGames = getSortedGames(filteredGames);
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
        <div className="flex flex-col gap-4">
@@ -603,11 +423,11 @@ const GameLibrary = ({ mood }) => {
               <Gamepad2 className="text-violet-500" /> Bibliothèque Quantique
             </h2>
             <div className="hidden md:block text-xs text-gray-500 uppercase tracking-widest">
-               {mood === 'chill' ? 'Mode Détente Activé' : mood === 'social' ? 'Mode Social Activé' : 'Tous les titres'}
+               {mood === 'chill' ? 'Mode Détente Activé' : mood === 'social' ? 'Mode Social Activé' : 'Tous les titres'} ({displayedGames.length})
             </div>
          </div>
 
-         <div className="flex flex-col md:flex-row justify-between gap-4 bg-[#131625] p-4 rounded-2xl border border-white/5">
+         <div className="flex flex-col md:flex-row justify-between gap-4 bg-[#131625] p-4 rounded-2xl border border-white/5 relative z-20">
            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
               <button key="all" onClick={() => setFilter('all')} className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${filter === 'all' ? 'bg-violet-600 text-white' : 'bg-white/5 text-gray-400'}`}>Tous</button>
               {/* Contextual Filters based on Mood */}
@@ -620,25 +440,94 @@ const GameLibrary = ({ mood }) => {
                 </button>
               ))}
            </div>
-           <div className="relative w-full md:w-64">
-             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
-             <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Rechercher..." className="bg-black/30 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-violet-500/50 w-full transition-colors" />
+           
+           <div className="flex gap-2 items-center w-full md:w-auto">
+             {/* Sort Menu */}
+             <div className="relative">
+                <button 
+                  onClick={() => setShowSortMenu(!showSortMenu)}
+                  className={`p-2.5 rounded-xl border transition-all ${showSortMenu ? 'bg-violet-600 border-violet-500 text-white' : 'bg-black/30 border-white/10 text-gray-400 hover:text-white'}`}
+                >
+                   <SlidersHorizontal size={18} />
+                </button>
+                
+                {showSortMenu && (
+                  <div className="absolute top-12 right-0 w-48 bg-[#1a1d2d] border border-white/10 rounded-xl shadow-2xl p-2 flex flex-col gap-1 z-50 animate-in fade-in zoom-in-95 duration-200">
+                      {[
+                        { id: 'recent', label: 'Récemment lancé', icon: Clock },
+                        { id: 'hours', label: 'Heures jouées', icon: ArrowDownWideNarrow },
+                        { id: 'alpha', label: 'Alphabétique', icon: SortAsc },
+                        { id: 'completion', label: 'Complétion', icon: Trophy },
+                      ].map(opt => (
+                        <button
+                          key={opt.id}
+                          onClick={() => { setSortBy(opt.id); setShowSortMenu(false); }}
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors ${sortBy === opt.id ? 'bg-violet-600/20 text-violet-300' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
+                        >
+                          <opt.icon size={14} /> {opt.label}
+                          {sortBy === opt.id && <Check size={12} className="ml-auto text-violet-400" />}
+                        </button>
+                      ))}
+                  </div>
+                )}
+             </div>
+
+             <div className="relative w-full md:w-64">
+               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+               <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Rechercher..." className="bg-black/30 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-violet-500/50 w-full transition-colors" />
+             </div>
            </div>
          </div>
        </div>
 
        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-10">
-          {filteredGames.map((game, idx) => (
+          {displayedGames.map((game, idx) => (
              <Card key={idx} className="group relative p-0 overflow-hidden border-white/5 hover:border-violet-500/50 transition-all duration-300 bg-[#131625] h-64 flex flex-col">
                 <div className={`h-36 w-full relative overflow-hidden ${game.color}`}>
                    <img src={`https://image.pollinations.ai/prompt/cinematic%20shot%20video%20game%20${encodeURIComponent(game.name)}%20cover%20art%20dark%20aesthetic?width=400&height=300&nologo=true`} alt={game.name} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-in-out" loading="lazy" />
                    <div className="absolute inset-0 bg-gradient-to-t from-[#131625] via-[#131625]/40 to-transparent opacity-90 group-hover:opacity-70 transition-opacity"></div>
+                   
+                   <div className="absolute top-3 right-3 z-10">
+                      {game.completion === 100 && <Trophy size={14} className="text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" />}
+                   </div>
+                   <div className="absolute bottom-2 left-3 flex gap-2 z-10">
+                      <div className="p-1.5 bg-black/60 backdrop-blur-md rounded-lg border border-white/10" title={game.platform}>
+                         {game.platform === 'Steam' && <Monitor size={12} className="text-blue-400" />}
+                         {game.platform === 'PSN' && <Gamepad2 size={12} className="text-blue-600" />}
+                         {game.platform === 'Switch' && <Smartphone size={12} className="text-red-500" />}
+                         {game.platform === 'Riot' && <Swords size={12} className="text-red-400" />}
+                         {game.platform === 'Battle.net' && <Zap size={12} className="text-cyan-400" />}
+                      </div>
+                   </div>
                 </div>
+                
                 <div className="p-4 flex-1 flex flex-col justify-between relative bg-[#131625]">
-                   <div><h3 className="font-bold text-white text-sm truncate mb-1">{game.name}</h3><p className="text-[10px] text-gray-500 uppercase tracking-wider">{game.genre}</p></div>
+                   <div>
+                     <h3 className="font-bold text-white text-sm truncate mb-1 group-hover:text-violet-400 transition-colors">{game.name}</h3>
+                     <p className="text-[10px] text-gray-500 uppercase tracking-wider">{game.genre}</p>
+                   </div>
+                   
                    <div className="space-y-2 mt-3">
-                      <div className="flex items-center justify-between text-xs text-gray-400"><span className="flex items-center gap-1.5"><Clock size={10} /> {game.hours}h</span></div>
-                      {game.completion !== null && <div className="w-full bg-gray-800 h-1 rounded-full overflow-hidden"><div className="bg-gradient-to-r from-cyan-500 to-violet-500 h-full rounded-full" style={{width: `${game.completion}%`}}></div></div>}
+                      <div className="flex items-center justify-between text-xs text-gray-400">
+                          <span className="flex items-center gap-1.5"><Clock size={10} /> {game.hours}h</span>
+                          <span className="text-[10px]">{game.lastPlayed}</span>
+                      </div>
+                      
+                      {game.completion !== null && (
+                        <div className="w-full bg-gray-800 h-1 rounded-full overflow-hidden">
+                           <div className="bg-gradient-to-r from-cyan-500 to-violet-500 h-full rounded-full" style={{width: `${game.completion}%`}}></div>
+                        </div>
+                      )}
+                   </div>
+                   
+                   <div className="absolute inset-0 bg-violet-950/90 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-3 translate-y-4 group-hover:translate-y-0 z-20">
+                      <button className="px-6 py-2 rounded-full bg-white text-black font-bold text-xs hover:scale-105 transition-transform flex items-center gap-2">
+                        <Gamepad2 size={14} /> JOUER
+                      </button>
+                      <div className="flex gap-2">
+                         <button className="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"><Activity size={14} /></button>
+                         <button className="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"><Share size={14} /></button>
+                      </div>
                    </div>
                 </div>
              </Card>
@@ -648,7 +537,6 @@ const GameLibrary = ({ mood }) => {
   )
 }
 
-// --- VUE: Social Hub (MODIFIÉE : Tri standard, pas d'humeur) ---
 const SocialHub = ({ friends, handleSynergyCheck, handleSquadBriefing, setActiveTab }) => {
   const [socialTab, setSocialTab] = useState('squad');
 
