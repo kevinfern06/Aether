@@ -181,8 +181,7 @@ const GamerDNA = ({ stats, size = 200, showLabels = true, expanded = false }) =>
   );
 };
 
-// --- VIEWS ---
-
+// --- VUE: Dashboard (Accueil Dynamique) ---
 const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOracle, handleSynergyCheck, handleSquadBriefing, setActiveTab, mood }) => {
   const getFilteredGames = () => {
     if (mood === 'chill') return games.filter(g => g.tags.includes('Chill') || g.tags.includes('Solo'));
@@ -288,9 +287,40 @@ const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOrac
             )}
           </div>
         </Card>
+
+        {mood === 'competitif' && (
+          <Card className="relative overflow-hidden">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <Globe size={18} className="text-cyan-400" /> Univers Connectés
+              </h2>
+              <button 
+                onClick={() => setActiveTab('settings')}
+                className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1 font-bold hover:underline"
+              >
+                + Connecter
+              </button>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+               {[
+                 { name: 'Steam', icon: Monitor, active: true, color: 'group-hover:text-blue-400' },
+                 { name: 'PSN', icon: Gamepad2, active: true, color: 'group-hover:text-blue-600' },
+                 { name: 'Epic', icon: Zap, active: true, color: 'group-hover:text-gray-200' },
+                 { name: 'Xbox', icon: Cpu, active: false, color: 'group-hover:text-green-500' },
+                 { name: 'Mobile', icon: Smartphone, active: false, color: 'group-hover:text-yellow-400' },
+               ].map((p, idx) => (
+                 <div key={idx} className={`group flex flex-col items-center justify-center p-3 rounded-xl border transition-all cursor-pointer ${p.active ? 'bg-white/5 border-white/10 hover:border-white/30' : 'bg-transparent border-dashed border-gray-700 opacity-50 hover:opacity-100'}`}>
+                   <p.icon size={24} className={`mb-2 text-gray-400 transition-colors ${p.active ? p.color : ''}`} />
+                   <span className="text-xs font-medium text-gray-400">{p.name}</span>
+                   {p.active && <div className="mt-2 w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.5)]"></div>}
+                 </div>
+               ))}
+            </div>
+          </Card>
+        )}
       </div>
 
-      {/* Right Column: Social */}
+      {/* Right Column: Friends & Social (3 cols) */}
       <div className="md:col-span-12 lg:col-span-3 space-y-6">
          <Card className="h-full bg-gradient-to-b from-[#131625]/90 to-[#0f1119]/95">
            <div className="flex justify-between items-center mb-6">
@@ -298,31 +328,75 @@ const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOrac
                <Users size={18} className={mood === 'social' ? 'text-pink-400' : 'text-violet-400'} /> Squad
              </h2>
              <div className="flex gap-2">
-                <button onClick={handleSquadBriefing} className="p-1.5 rounded-lg bg-violet-600/20 text-violet-300 hover:bg-violet-600 hover:text-white transition-all" title="Briefing Tactique IA"><ClipboardList size={14} /></button>
-                <button onClick={() => setActiveTab('social')} className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors" title="Chercher des joueurs"><Search size={14} className="text-gray-400" /></button>
+                <button
+                  onClick={handleSquadBriefing}
+                  className="p-1.5 rounded-lg bg-violet-600/20 text-violet-300 hover:bg-violet-600 hover:text-white transition-all"
+                  title="Briefing Tactique IA"
+                >
+                  <ClipboardList size={14} />
+                </button>
+                <button 
+                  onClick={() => setActiveTab('social')}
+                  className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                  title="Chercher des joueurs"
+                >
+                  <Search size={14} className="text-gray-400" />
+                </button>
              </div>
            </div>
+
            <div className="space-y-4">
              {friends.map((friend, idx) => (
-               <div key={idx} className="group flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors relative cursor-pointer" onClick={() => setActiveTab('profile')} title="Voir le profil">
+               <div 
+                 key={idx} 
+                 className="group flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors relative cursor-pointer"
+                 onClick={() => setActiveTab('profile')}
+                 title="Voir le profil"
+               >
                  <div className="relative">
-                   <div className="w-10 h-10 rounded-full bg-gray-800 border border-white/10 flex items-center justify-center text-xs font-bold">{friend.name.charAt(0)}</div>
+                   <div className="w-10 h-10 rounded-full bg-gray-800 border border-white/10 flex items-center justify-center text-xs font-bold">
+                      {friend.name.charAt(0)}
+                   </div>
                    <div className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-[#131625] ${friend.status.includes('In Game') ? 'bg-green-500' : friend.status === 'Hors ligne' ? 'bg-gray-500' : 'bg-cyan-500'}`}></div>
                  </div>
                  <div className="flex-1 min-w-0">
                    <h4 className="text-sm font-medium text-gray-200 truncate">{friend.name}</h4>
                    <p className="text-xs text-gray-500 truncate">{friend.status}</p>
                  </div>
+                 
+                 {/* Actions au survol : Ajouter / Synergie */}
                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all absolute right-2">
-                    <button className="p-1.5 rounded-md bg-green-600 text-white hover:bg-green-500 shadow-lg hover:scale-110 transition-transform" title="Ajouter en ami" onClick={(e) => { e.stopPropagation(); }}><UserPlus size={14} /></button>
-                    <button onClick={(e) => { e.stopPropagation(); handleSynergyCheck(friend); }} className="bg-violet-600 text-white p-1.5 rounded-md shadow-lg hover:bg-violet-500 hover:scale-110 transition-transform" title="Analyser la Synergie"><Sparkles size={14} /></button>
+                    <button 
+                      className="p-1.5 rounded-md bg-green-600 text-white hover:bg-green-500 shadow-lg hover:scale-110 transition-transform"
+                      title="Ajouter en ami"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Mock add functionality
+                      }}
+                    >
+                      <UserPlus size={14} />
+                    </button>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSynergyCheck(friend);
+                      }}
+                      className="bg-violet-600 text-white p-1.5 rounded-md shadow-lg hover:bg-violet-500 hover:scale-110 transition-transform"
+                      title="Analyser la Synergie"
+                    >
+                      <Sparkles size={14} />
+                    </button>
                  </div>
                </div>
              ))}
            </div>
+
            <div className="mt-8 pt-6 border-t border-white/5">
              <h3 className="text-sm font-medium text-gray-300 mb-3">Suggestions de Squad</h3>
-             <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center gap-3 cursor-pointer hover:bg-violet-500/20 transition-colors group">
+             {/* Modified Suggestion Card to look like a profile to add */}
+             <div 
+               className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center gap-3 cursor-pointer hover:bg-violet-500/20 transition-colors group"
+             >
                 <div className="w-10 h-10 rounded-full bg-gray-800 border border-violet-500/30 overflow-hidden">
                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Viper_X" alt="Viper_X" />
                 </div>
@@ -330,13 +404,17 @@ const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOrac
                   <p className="text-xs text-violet-200 font-bold">Viper_X</p>
                   <p className="text-[10px] text-violet-400/80">Compatibilité 92%</p>
                 </div>
-                <button className="p-2 rounded-lg bg-violet-600 text-white hover:bg-violet-500 shadow-lg opacity-0 group-hover:opacity-100 transition-all" title="Ajouter Viper_X">
+                <button 
+                  className="p-2 rounded-lg bg-violet-600 text-white hover:bg-violet-500 shadow-lg opacity-0 group-hover:opacity-100 transition-all"
+                  title="Ajouter Viper_X"
+                >
                   <UserPlus size={16} />
                 </button>
              </div>
            </div>
          </Card>
       </div>
+
     </div>
   );
 };
@@ -1176,7 +1254,14 @@ export default function AetherApp() {
       <aside className={`fixed inset-y-0 left-0 z-50 w-20 bg-[#0f121e]/90 backdrop-blur-md border-r border-white/5 flex flex-col items-center py-8 transition-transform duration-300 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="mb-12 relative group cursor-pointer" onClick={() => setActiveTab('dashboard')}>
           <div className="absolute inset-0 bg-cyan-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
-          <div className="relative w-10 h-10 bg-gradient-to-br from-cyan-500 to-violet-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/20"> A </div>
+          {/* Remplacement du 'A' textuel par l'image du logo */}
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden shadow-lg shadow-cyan-500/20 border border-white/10">
+             <img 
+               src="https://image.pollinations.ai/prompt/futuristic%20letter%20A%20logo%20cyan%20purple%20gradient%20vector%20minimalist%20dark%20background?width=100&height=100&nologo=true" 
+               alt="Aether Logo"
+               className="w-full h-full object-cover" 
+             />
+          </div>
         </div>
         <nav className="flex-1 flex flex-col space-y-8 w-full px-2">
           {[ { id: 'dashboard', icon: Activity, label: "Hub" }, { id: 'games', icon: Gamepad2, label: "Jeux" }, { id: 'social', icon: Users, label: "Amis" }, { id: 'achievements', icon: Trophy, label: "Succès" } ].map((item) => (
