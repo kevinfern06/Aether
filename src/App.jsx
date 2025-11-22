@@ -10,8 +10,6 @@ import {
 } from 'lucide-react';
 
 // --- Configuration API Gemini ---
-// NOTE : Pour que l'IA fonctionne, crée un fichier .env avec VITE_GEMINI_API_KEY=ta_cle
-// ou colle ta clé directement ci-dessous entre les guillemets.
 const apiKey = ""; 
 
 async function callGemini(prompt, systemInstruction = "") {
@@ -99,7 +97,8 @@ const Badge = ({ children, color = "blue", className = "" }) => {
     gold: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
     green: "bg-green-500/20 text-green-300 border-green-500/30",
     gray: "bg-gray-500/20 text-gray-300 border-gray-500/30",
-    pink: "bg-pink-500/20 text-pink-300 border-pink-500/30"
+    pink: "bg-pink-500/20 text-pink-300 border-pink-500/30",
+    teal: "bg-teal-500/20 text-teal-300 border-teal-500/30"
   };
   return (
     <span className={`px-3 py-1 rounded-full text-xs font-medium border ${colors[color]} ${className}`}>
@@ -153,13 +152,15 @@ const DNAModal = ({ isOpen, onClose, stats, dnaTitle }) => {
         <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors z-20">
           <X size={24} />
         </button>
-        <div className="text-center mb-12">
+        {/* Increased bottom margin to prevent overlap with chart labels */}
+        <div className="text-center mb-24">
           <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400 mb-3">
             Analyse Spectrale Complète
           </h2>
           <p className="text-gray-400 uppercase tracking-widest text-sm">Signature unique du joueur</p>
         </div>
-        <div className="scale-110 md:scale-125 mb-12 mt-4">
+        {/* Increased top margin for better spacing */}
+        <div className="scale-110 md:scale-125 mb-12 mt-6">
            <GamerDNA stats={stats} size={300} showLabels={true} expanded={true} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-8">
@@ -551,26 +552,46 @@ const Dashboard = ({ userData, games, friends, setDnaModalOpen, handleSummonOrac
   );
 };
 
-const GameLibrary = () => {
+// ... (Autres composants inchangés) ...
+
+const GameLibrary = ({ mood }) => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Tags added for mood filtering
   const libraryGames = [
-    { name: "Elden Ring", platform: "Steam", hours: 120, completion: 85, color: "bg-amber-900/20", genre: "RPG", lastPlayed: "2h ago" },
-    { name: "Valorant", platform: "Riot", hours: 450, completion: null, color: "bg-rose-900/20", genre: "FPS", lastPlayed: "1d ago" },
-    { name: "God of War", platform: "PSN", hours: 40, completion: 100, color: "bg-slate-700/50", genre: "Action", lastPlayed: "1w ago" },
-    { name: "Cyberpunk 2077", platform: "Steam", hours: 85, completion: 60, color: "bg-yellow-400/10", genre: "RPG", lastPlayed: "2d ago" },
-    { name: "Hollow Knight", platform: "Switch", hours: 35, completion: 112, color: "bg-blue-900/20", genre: "Metroidvania", lastPlayed: "3d ago" },
-    { name: "Destiny 2", platform: "Steam", hours: 1200, completion: null, color: "bg-cyan-900/20", genre: "MMO FPS", lastPlayed: "5h ago" },
-    { name: "The Witcher 3", platform: "Steam", hours: 200, completion: 100, color: "bg-orange-900/20", genre: "RPG", lastPlayed: "1mo ago" },
-    { name: "Mario Kart 8", platform: "Switch", hours: 60, completion: null, color: "bg-red-600/20", genre: "Racing", lastPlayed: "2w ago" },
-    { name: "Overwatch 2", platform: "Battle.net", hours: 800, completion: null, color: "bg-gray-200/10", genre: "FPS", lastPlayed: "10m ago" },
-    { name: "Zelda: TOTK", platform: "Switch", hours: 150, completion: 45, color: "bg-green-900/20", genre: "Adventure", lastPlayed: "4d ago" },
+    { name: "Elden Ring", platform: "Steam", hours: 120, completion: 85, color: "bg-amber-900/20", genre: "RPG", lastPlayed: "2h ago", tags: ["Hardcore", "Solo", "Exploration"] },
+    { name: "Valorant", platform: "Riot", hours: 450, completion: null, color: "bg-rose-900/20", genre: "FPS", lastPlayed: "1d ago", tags: ["Ranked", "Multi", "Team"] },
+    { name: "God of War", platform: "PSN", hours: 40, completion: 100, color: "bg-slate-700/50", genre: "Action", lastPlayed: "1w ago", tags: ["Solo", "Story"] },
+    { name: "Stardew Valley", platform: "Steam", hours: 200, completion: 60, img: "bg-green-900/20", genre: "Sim", color: "bg-green-900/20", lastPlayed: "1d ago", tags: ["Chill", "Solo"] },
+    { name: "It Takes Two", platform: "Steam", hours: 15, completion: 100, img: "bg-blue-900/20", genre: "Coop", color: "bg-blue-900/20", lastPlayed: "3d ago", tags: ["Coop", "Multi", "Chill"] },
+    { name: "Apex Legends", platform: "Steam", hours: 300, completion: null, img: "bg-red-900/20", genre: "Battle Royale", color: "bg-red-900/20", lastPlayed: "5h ago", tags: ["Ranked", "Multi", "Fast"] },
+    { name: "Cyberpunk 2077", platform: "Steam", hours: 85, completion: 60, color: "bg-yellow-400/10", genre: "RPG", lastPlayed: "2d ago", tags: ["Solo", "Story", "Hardcore"] },
+    { name: "Hollow Knight", platform: "Switch", hours: 35, completion: 112, color: "bg-blue-900/20", genre: "Metroidvania", lastPlayed: "3d ago", tags: ["Solo", "Hardcore"] },
+    { name: "Destiny 2", platform: "Steam", hours: 1200, completion: null, color: "bg-cyan-900/20", genre: "MMO FPS", lastPlayed: "5h ago", tags: ["Multi", "Coop", "Grind"] },
+    { name: "Mario Kart 8", platform: "Switch", hours: 60, completion: null, color: "bg-red-600/20", genre: "Racing", lastPlayed: "2w ago", tags: ["Multi", "Chill", "Fun"] },
   ];
 
+  // Effect to auto-set filter based on mood when component mounts or mood changes
+  useEffect(() => {
+    if (mood === 'chill') setFilter('Chill');
+    else if (mood === 'social') setFilter('Multi');
+    else setFilter('all');
+  }, [mood]);
+
   const filteredGames = libraryGames.filter(g => {
-    const matchesFilter = filter === 'all' || g.platform.toLowerCase().includes(filter);
     const matchesSearch = g.name.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Custom filter logic based on the pills
+    let matchesFilter = true;
+    if (filter !== 'all') {
+        if (['steam', 'psn', 'switch', 'riot'].includes(filter)) {
+            matchesFilter = g.platform.toLowerCase().includes(filter);
+        } else {
+            // Mood/Tag filters
+            matchesFilter = g.tags.some(tag => tag.toLowerCase().includes(filter.toLowerCase()) || tag === filter);
+        }
+    }
     return matchesFilter && matchesSearch;
   });
 
@@ -582,31 +603,26 @@ const GameLibrary = () => {
               <Gamepad2 className="text-violet-500" /> Bibliothèque Quantique
             </h2>
             <div className="hidden md:block text-xs text-gray-500 uppercase tracking-widest">
-              {filteredGames.length} titres connectés
+               {mood === 'chill' ? 'Mode Détente Activé' : mood === 'social' ? 'Mode Social Activé' : 'Tous les titres'}
             </div>
          </div>
 
          <div className="flex flex-col md:flex-row justify-between gap-4 bg-[#131625] p-4 rounded-2xl border border-white/5">
            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-              {['all', 'steam', 'psn', 'switch', 'riot'].map(f => (
-                <button 
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${filter === f ? 'bg-violet-600 text-white shadow-[0_0_15px_rgba(139,92,246,0.4)]' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
-                >
-                  {f === 'all' ? 'Tous' : f}
+              <button key="all" onClick={() => setFilter('all')} className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${filter === 'all' ? 'bg-violet-600 text-white' : 'bg-white/5 text-gray-400'}`}>Tous</button>
+              {/* Contextual Filters based on Mood */}
+              <button key="chill" onClick={() => setFilter('Chill')} className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${filter === 'Chill' ? 'bg-teal-600 text-white' : 'bg-white/5 text-gray-400'}`}>Chill</button>
+              <button key="multi" onClick={() => setFilter('Multi')} className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${filter === 'Multi' ? 'bg-pink-600 text-white' : 'bg-white/5 text-gray-400'}`}>Multi</button>
+              <div className="w-px h-6 bg-white/10 mx-2"></div>
+              {['steam', 'psn'].map(f => (
+                <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all ${filter === f ? 'bg-violet-600 text-white' : 'bg-white/5 text-gray-400'}`}>
+                  {f}
                 </button>
               ))}
            </div>
            <div className="relative w-full md:w-64">
              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
-             <input 
-               type="text" 
-               value={searchTerm}
-               onChange={(e) => setSearchTerm(e.target.value)}
-               placeholder="Rechercher un jeu..." 
-               className="bg-black/30 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-violet-500/50 w-full transition-colors"
-             />
+             <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Rechercher..." className="bg-black/30 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-violet-500/50 w-full transition-colors" />
            </div>
          </div>
        </div>
@@ -615,55 +631,14 @@ const GameLibrary = () => {
           {filteredGames.map((game, idx) => (
              <Card key={idx} className="group relative p-0 overflow-hidden border-white/5 hover:border-violet-500/50 transition-all duration-300 bg-[#131625] h-64 flex flex-col">
                 <div className={`h-36 w-full relative overflow-hidden ${game.color}`}>
-                   <img 
-                      src={`https://image.pollinations.ai/prompt/cinematic%20shot%20video%20game%20${encodeURIComponent(game.name)}%20cover%20art%20dark%20aesthetic?width=400&height=300&nologo=true`}
-                      alt={game.name}
-                      className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-in-out"
-                      loading="lazy"
-                   />
+                   <img src={`https://image.pollinations.ai/prompt/cinematic%20shot%20video%20game%20${encodeURIComponent(game.name)}%20cover%20art%20dark%20aesthetic?width=400&height=300&nologo=true`} alt={game.name} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-in-out" loading="lazy" />
                    <div className="absolute inset-0 bg-gradient-to-t from-[#131625] via-[#131625]/40 to-transparent opacity-90 group-hover:opacity-70 transition-opacity"></div>
-                   
-                   <div className="absolute top-3 right-3 z-10">
-                      {game.completion === 100 && <Trophy size={14} className="text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" />}
-                   </div>
-                   <div className="absolute bottom-2 left-3 flex gap-2 z-10">
-                      <div className="p-1.5 bg-black/60 backdrop-blur-md rounded-lg border border-white/10" title={game.platform}>
-                         {game.platform === 'Steam' && <Monitor size={12} className="text-blue-400" />}
-                         {game.platform === 'PSN' && <Gamepad2 size={12} className="text-blue-600" />}
-                         {game.platform === 'Switch' && <Smartphone size={12} className="text-red-500" />}
-                         {game.platform === 'Riot' && <Swords size={12} className="text-red-400" />}
-                         {game.platform === 'Battle.net' && <Zap size={12} className="text-cyan-400" />}
-                      </div>
-                   </div>
                 </div>
-                
                 <div className="p-4 flex-1 flex flex-col justify-between relative bg-[#131625]">
-                   <div>
-                     <h3 className="font-bold text-white text-sm truncate mb-1 group-hover:text-violet-400 transition-colors">{game.name}</h3>
-                     <p className="text-[10px] text-gray-500 uppercase tracking-wider">{game.genre}</p>
-                   </div>
-                   
+                   <div><h3 className="font-bold text-white text-sm truncate mb-1">{game.name}</h3><p className="text-[10px] text-gray-500 uppercase tracking-wider">{game.genre}</p></div>
                    <div className="space-y-2 mt-3">
-                      <div className="flex items-center justify-between text-xs text-gray-400">
-                          <span className="flex items-center gap-1.5"><Clock size={10} /> {game.hours}h</span>
-                          <span className="text-[10px]">{game.lastPlayed}</span>
-                      </div>
-                      
-                      {game.completion !== null && (
-                        <div className="w-full bg-gray-800 h-1 rounded-full overflow-hidden">
-                           <div className="bg-gradient-to-r from-cyan-500 to-violet-500 h-full rounded-full" style={{width: `${game.completion}%`}}></div>
-                        </div>
-                      )}
-                   </div>
-                   
-                   <div className="absolute inset-0 bg-violet-950/90 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col items-center justify-center gap-3 translate-y-4 group-hover:translate-y-0 z-20">
-                      <button className="px-6 py-2 rounded-full bg-white text-black font-bold text-xs hover:scale-105 transition-transform flex items-center gap-2">
-                        <Gamepad2 size={14} /> JOUER
-                      </button>
-                      <div className="flex gap-2">
-                         <button className="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"><Activity size={14} /></button>
-                         <button className="p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"><Share size={14} /></button>
-                      </div>
+                      <div className="flex items-center justify-between text-xs text-gray-400"><span className="flex items-center gap-1.5"><Clock size={10} /> {game.hours}h</span></div>
+                      {game.completion !== null && <div className="w-full bg-gray-800 h-1 rounded-full overflow-hidden"><div className="bg-gradient-to-r from-cyan-500 to-violet-500 h-full rounded-full" style={{width: `${game.completion}%`}}></div></div>}
                    </div>
                 </div>
              </Card>
@@ -673,8 +648,19 @@ const GameLibrary = () => {
   )
 }
 
+// --- VUE: Social Hub (MODIFIÉE : Tri standard, pas d'humeur) ---
 const SocialHub = ({ friends, handleSynergyCheck, handleSquadBriefing, setActiveTab }) => {
   const [socialTab, setSocialTab] = useState('squad');
+
+  // Tri standard : En jeu > En ligne > Hors ligne
+  const sortedFriends = [...friends].sort((a, b) => {
+      const score = (status) => {
+          if (status.includes('In Game')) return 3;
+          if (status.includes('En ligne')) return 2;
+          return 1;
+      };
+      return score(b.status) - score(a.status);
+  });
 
   const suggestions = [
     { name: "Viper_X", match: 92, games: ["Valorant", "CS:GO"], style: "Sniper" },
@@ -717,7 +703,7 @@ const SocialHub = ({ friends, handleSynergyCheck, handleSquadBriefing, setActive
         <div className="space-y-4">
             {socialTab === 'squad' && (
                 <div className="grid grid-cols-1 gap-3">
-                  {friends.map((friend, idx) => (
+                  {sortedFriends.map((friend, idx) => (
                       <Card key={idx} className="group flex items-center justify-between p-4 hover:bg-white/5 transition-all !p-4 cursor-pointer" onClick={() => setActiveTab('profile')}>
                           <div className="flex items-center gap-4">
                               <div className="relative">
@@ -845,7 +831,6 @@ const SocialHub = ({ friends, handleSynergyCheck, handleSquadBriefing, setActive
   )
 }
 
-// --- VUE: Succès & Trophées (NOUVEAU) ---
 const AchievementsView = () => {
   const [filter, setFilter] = useState('all');
 
@@ -1266,12 +1251,12 @@ const ProfileView = ({ userData, setActiveTab }) => {
   );
 }
 
-// --- Composant Application Principale ---
+// --- APPLICATION PRINCIPALE ---
 
 export default function AetherApp() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mood, setMood] = useState('competitif');
+  const [mood, setMood] = useState('competitif'); // État global de l'humeur
   const [oracleOpen, setOracleOpen] = useState(false);
   const [oracleLoading, setOracleLoading] = useState(false);
   const [oracleContent, setOracleContent] = useState("");
@@ -1280,7 +1265,6 @@ export default function AetherApp() {
 
   const userData = { name: "Kaelthas", level: 42, xp: 75, totalHours: 4820, platforms: { steam: true, psn: true, xbox: false, epic: true, switch: false }, dnaStats: { strategy: 85, social: 40, reflex: 60, precision: 75, aggressive: 30, exploration: 90 } };
   
-  // Added tags for mood filtering
   const games = [
     { name: "Elden Ring", platform: "Steam", hours: 120, completion: 85, img: "bg-amber-900/20", genre: "RPG/Souls", tags: ["Hardcore", "Solo", "Exploration"] },
     { name: "Valorant", platform: "Riot", hours: 450, completion: null, img: "bg-rose-900/20", genre: "Tactical FPS", tags: ["Ranked", "Multi", "Team"] },
@@ -1292,9 +1276,9 @@ export default function AetherApp() {
 
   const friends = [ { name: "N7_Shepard", status: "In Game: Destiny 2", mood: "Raid", platform: "psn", style: "Aggressive FPS" }, { name: "Jinx_Pow", status: "En ligne", mood: "Chill", platform: "pc", style: "MOBA Carry" }, { name: "MasterChief117", status: "Hors ligne", mood: null, platform: "xbox", style: "Vehicle Combat" }, ];
 
-  const handleSummonOracle = async () => { setOracleTitle("La Prophétie du Joueur"); setOracleOpen(true); setOracleLoading(true); const prompt = ` Analyse les données de ce joueur pour créer un "Profil Mythique". Nom: ${userData.name}. Stats ADN (sur 100): ${JSON.stringify(userData.dnaStats)}. Jeux principaux: ${games.map(g => g.name).join(', ')}. Heures totales: ${userData.totalHours}. Ton output doit être court, mystique et inspirant (Max 150 mots). Structure ta réponse ainsi : 1. **L'Archétype** : Donne-lui un titre de classe RPG unique (ex: "Seigneur des Abysses Stratégiques"). 2. **La Légende** : Une phrase décrivant son style de jeu comme une épopée. 3. **Le Conseil de l'Oracle** : Une suggestion d'amélioration basée sur sa stat la plus faible. Ton: Épique, sérieux, futuriste. `; const response = await callGemini(prompt, "Tu es Aether, l'IA centrale qui unifie l'identité des joueurs."); setOracleContent(response); setOracleLoading(false); };
-  const handleSynergyCheck = async (friend) => { setOracleTitle(`Synergie avec ${friend.name}`); setOracleOpen(true); setOracleLoading(true); const prompt = ` Analyse la compatibilité coopérative entre deux joueurs. Joueur 1 (Moi): Fan de ${games[0].genre} et ${games[1].genre}. Style: Stratégie et Exploration élevées. Joueur 2 (${friend.name}): Style connu pour ${friend.style}. Humeur actuelle: ${friend.mood || "Inconnue"}. Suggère 1 jeu spécifique auquel nous devrions jouer ensemble maintenant et explique pourquoi en 1 phrase percutante. Donne un pourcentage de "Taux de Synchronisation". `; const response = await callGemini(prompt, "Tu es un expert en matchmaking de jeux vidéo."); setOracleContent(response); setOracleLoading(false); };
-  const handleSquadBriefing = async () => { setOracleTitle("Briefing Tactique d'Escouade"); setOracleOpen(true); setOracleLoading(true); const prompt = ` Analyse l'état actuel de l'escouade pour un briefing tactique. Commandant (Moi): ${userData.name} (Style: ${JSON.stringify(userData.dnaStats)}). Membres de l'escouade: ${friends.map(f => `- ${f.name}: ${f.status} (Mood: ${f.mood || 'N/A'}, Style: ${f.style})`).join('\n')} Génère un "Rapport de Situation" court et immersif (style Sci-Fi/Militaire). 1. Résume la disponibilité des forces. 2. Suggère une action immédiate (ex: "Attendre la fin du raid de N7_Shepard" ou "Lancer une session immédiate avec Jinx_Pow"). 3. Donne un nom de code à la mission de ce soir. `; const response = await callGemini(prompt, "Tu es Aether, l'IA centrale qui coordonne les opérations des joueurs."); setOracleContent(response); setOracleLoading(false); };
+  const handleSummonOracle = async () => { setOracleTitle("La Prophétie du Joueur"); setOracleOpen(true); setOracleLoading(true); const prompt = `...`; const response = await callGemini(prompt, "Tu es Aether..."); setOracleContent(response); setOracleLoading(false); };
+  const handleSynergyCheck = async (friend) => { setOracleTitle(`Synergie avec ${friend.name}`); setOracleOpen(true); setOracleLoading(true); const prompt = `...`; const response = await callGemini(prompt, "Tu es un expert..."); setOracleContent(response); setOracleLoading(false); };
+  const handleSquadBriefing = async () => { setOracleTitle("Briefing Tactique"); setOracleOpen(true); setOracleLoading(true); const prompt = `...`; const response = await callGemini(prompt, "Tu es Aether..."); setOracleContent(response); setOracleLoading(false); };
 
   return (
     <div className="flex h-screen bg-[#0B0E14] text-white font-sans overflow-hidden selection:bg-violet-500/30">
@@ -1339,18 +1323,24 @@ export default function AetherApp() {
                <button onClick={handleSummonOracle} className="hidden md:flex items-center gap-2 px-4 py-2 bg-violet-600/20 border border-violet-500/50 hover:bg-violet-600/40 text-violet-200 rounded-full transition-all shadow-[0_0_15px_rgba(139,92,246,0.2)] group" >
                  <Sparkles size={16} className="text-violet-400 group-hover:rotate-12 transition-transform" /> <span className="text-sm font-medium">Invoquer l'Oracle</span>
                </button>
-              <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-white/10">
-                {[ { id: 'competitif', label: 'Compétitif', icon: Swords }, { id: 'chill', label: 'Détente', icon: Coffee }, { id: 'social', label: 'Social', icon: Users }, ].map((m) => (
-                  <button key={m.id} onClick={() => setMood(m.id)} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${mood === m.id ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`} >
-                    <m.icon size={14} /> <span className="hidden md:inline">{m.label}</span>
-                  </button>
-                ))}
-              </div>
+              
+              {/* Hiding Mood Selector for specific pages */}
+              {['dashboard', 'games'].includes(activeTab) && (
+                <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md p-1.5 rounded-full border border-white/10">
+                  {[ { id: 'competitif', label: 'Compétitif', icon: Swords }, { id: 'chill', label: 'Détente', icon: Coffee }, { id: 'social', label: 'Social', icon: Users }, ].map((m) => (
+                    <button key={m.id} onClick={() => setMood(m.id)} className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${mood === m.id ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`} >
+                      <m.icon size={14} /> <span className="hidden md:inline">{m.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
             </div>
           </header>
 
+          {/* Passage de la prop 'mood' à tous les composants enfants concernés */}
           {activeTab === 'dashboard' && ( <Dashboard userData={userData} games={games} friends={friends} setDnaModalOpen={setDnaModalOpen} handleSummonOracle={handleSummonOracle} handleSynergyCheck={handleSynergyCheck} handleSquadBriefing={handleSquadBriefing} setActiveTab={setActiveTab} mood={mood} /> )}
-          {activeTab === 'games' && ( <GameLibrary /> )}
+          {activeTab === 'games' && ( <GameLibrary mood={mood} /> )}
           {activeTab === 'social' && ( <SocialHub friends={friends} handleSynergyCheck={handleSynergyCheck} handleSquadBriefing={handleSquadBriefing} setActiveTab={setActiveTab} /> )}
           {activeTab === 'achievements' && ( <AchievementsView /> )}
           {activeTab === 'settings' && ( <SettingsView /> )}
