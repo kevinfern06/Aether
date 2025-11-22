@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* Ajout pour le fond global noir si besoin */
+body {
+  background-color: #0B0E14;
+  margin: 0;
+}
